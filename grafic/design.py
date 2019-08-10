@@ -13,8 +13,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(860, 626)
-        MainWindow.setMinimumSize(QtCore.QSize(860, 626))
+        MainWindow.resize(860, 618)
+        MainWindow.setMinimumSize(QtCore.QSize(860, 0))
         MainWindow.setMaximumSize(QtCore.QSize(860, 626))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("../images/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setStyleSheet("")
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(50, 10, 781, 551))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(40, 10, 781, 551))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.timeLabel)
         self.setTime = QtWidgets.QTimeEdit(self.horizontalLayoutWidget_2)
         self.setTime.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.setTime.setStyleSheet("color:white;")
         self.setTime.setObjectName("setTime")
         self.verticalLayout.addWidget(self.setTime)
         self.soundLabel = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
@@ -77,6 +78,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.soundLabel)
         self.selectSignal = QtWidgets.QFontComboBox(self.horizontalLayoutWidget_2)
         self.selectSignal.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.selectSignal.setStyleSheet("color:white;")
         self.selectSignal.setEditable(False)
         self.selectSignal.setObjectName("selectSignal")
         self.verticalLayout.addWidget(self.selectSignal)
@@ -136,14 +138,22 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(14)
         self.tableUserData.setFont(font)
-        self.tableUserData.setStyleSheet("background-color:light; color: white;")
+        self.tableUserData.setStyleSheet("background-color:rgb(211, 215, 207); color: black;")
         self.tableUserData.setSortingEnabled(True)
         self.tableUserData.setObjectName("tableUserData")
         self.verticalLayout_2.addWidget(self.tableUserData)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 860, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 860, 22))
+        self.menubar.setStyleSheet("color: white;\n"
+"\n"
+"QMenu {\n"
+"    background-color: rgb(190, 206, 221); /* sets background of the menu */\n"
+"    border: 1px solid black;\n"
+"}\n"
+"\n"
+"")
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
         self.menu.setObjectName("menu")
@@ -178,6 +188,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "TimeTracker v.1.0"))
         self.timerInnerLabel.setText(_translate("MainWindow", "Содержимое таймера:"))
+        self.timerText.setPlaceholderText(_translate("MainWindow", "Пишите здесь..."))
         self.timeLabel.setText(_translate("MainWindow", "Время"))
         self.soundLabel.setText(_translate("MainWindow", "Звук"))
         self.volumeLabel.setText(_translate("MainWindow", "Громкость"))

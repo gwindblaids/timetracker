@@ -1,5 +1,5 @@
 import sys
-from grafic.interface import *
+from grafic.interface import QtWidgets, MainWindow, LoginWindow, NewUserWindow
 
 
 app = QtWidgets.QApplication([])
