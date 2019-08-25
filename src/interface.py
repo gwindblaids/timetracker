@@ -1,7 +1,8 @@
 from PyQt5 import QtWidgets
-from grafic.select_user import Ui_selectUserWindow
-from grafic.design import Ui_MainWindow
-from grafic.user_form import Ui_NewUserWindow
+from src.select_user import Ui_selectUserWindow
+from src.main_window import Ui_MainWindow
+from src.user_form import Ui_NewUserWindow
+from src.about_us import Ui_AboutWindow
 
 
 class LoginWindow(QtWidgets.QMainWindow):
@@ -22,6 +23,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+
+class AboutWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(AboutWindow, self).__init__()
+        self.ui = Ui_AboutWindow()
         self.ui.setupUi(self)
 
 

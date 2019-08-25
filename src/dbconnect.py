@@ -2,7 +2,7 @@ import sqlite3
 
 
 class Database:
-    def __init__(self, dbname='timetracker.db'):
+    def __init__(self, dbname='time_tracker.db'):
         self.connection = sqlite3.connect(dbname)
         self.cursor = self.connection.cursor()
         if not self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall():
@@ -20,7 +20,7 @@ class Database:
         self.cursor.execute("""CREATE TABLE users
                           (first_name TEXT NOT NULL, last_name TEXT NOT NULL, profile_photo TEXT)""")
         self.cursor.execute("""CREATE TABLE tracker
-        (time_start TEXT NOT NULL, time_end TEXT NOT NULL, user_id INTEGER NOT NULL, FOREIGN KEY
+        (time_start timestamp NOT NULL, time_end timestamp NOT NULL, text_track TEXT, user_id INTEGER NOT NULL, FOREIGN KEY
          (user_id) REFERENCES users(rowid) )""")
         self.connection.commit()
 
@@ -30,9 +30,9 @@ class Database:
         result = self.cursor.execute(sql)
         return result.fetchall()
 
-    def create_track(self, time_start, time_end):
+    def create_track(self, time_start, time_end, text_track):
         sql = """INSERT INTO tracker
-        VALUES ({}, {}, {})""".format(time_start, time_end, self.user_id)
+        VALUES ('{}', '{}', '{}', {})""".format(time_start, time_end, text_track, self.user_id)
         self.cursor.execute(sql)
         self.connection.commit()
 

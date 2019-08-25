@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './grafic/design.ui'
+# Form implementation generated from reading ui file './ui_files/design.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -8,21 +8,29 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from os import listdir
+from os.path import isfile, join
+from datetime import datetime, timedelta
+from src.dbconnect import Database
+from vlc import MediaPlayer
+
+MUSIC_DIR = "../music/"
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(860, 618)
-        MainWindow.setMinimumSize(QtCore.QSize(860, 0))
-        MainWindow.setMaximumSize(QtCore.QSize(860, 626))
+        self.MainWindow = MainWindow
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(860, 618)
+        self.MainWindow.setMinimumSize(QtCore.QSize(860, 618))
+        self.MainWindow.setMaximumSize(QtCore.QSize(860, 618))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("../images/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        MainWindow.setWindowIcon(icon)
-        MainWindow.setAutoFillBackground(False)
-        MainWindow.setStyleSheet("background-color: #414053;")
-        MainWindow.setDocumentMode(False)
-        MainWindow.setUnifiedTitleAndToolBarOnMac(True)
+        self.MainWindow.setWindowIcon(icon)
+        self.MainWindow.setAutoFillBackground(False)
+        self.MainWindow.setStyleSheet("background-color: #414053;")
+        self.MainWindow.setDocumentMode(False)
+        self.MainWindow.setUnifiedTitleAndToolBarOnMac(True)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("")
         self.centralwidget.setObjectName("centralwidget")
@@ -45,6 +53,8 @@ class Ui_MainWindow(object):
         self.timerInnerLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.timerInnerLabel.setObjectName("timerInnerLabel")
         self.verticalLayout.addWidget(self.timerInnerLabel)
+        spacerItem = QtWidgets.QSpacerItem(20, 15, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacerItem)
         self.timerText = QtWidgets.QTextEdit(self.horizontalLayoutWidget_2)
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -69,6 +79,7 @@ class Ui_MainWindow(object):
         self.setTime.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.setTime.setStyleSheet("color:white;")
         self.setTime.setObjectName("setTime")
+        self.setTime.setDisplayFormat("HH:mm:ss")
         self.verticalLayout.addWidget(self.setTime)
         self.soundLabel = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
         self.soundLabel.setStyleSheet("color:white;")
@@ -76,11 +87,12 @@ class Ui_MainWindow(object):
         self.soundLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.soundLabel.setObjectName("soundLabel")
         self.verticalLayout.addWidget(self.soundLabel)
-        self.selectSignal = QtWidgets.QFontComboBox(self.horizontalLayoutWidget_2)
+        self.selectSignal = QtWidgets.QComboBox(self.horizontalLayoutWidget_2)
         self.selectSignal.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.selectSignal.setStyleSheet("color:white;")
         self.selectSignal.setEditable(False)
         self.selectSignal.setObjectName("selectSignal")
+        self.selectSignal.addItems([f.replace(".mp3", "") for f in listdir(MUSIC_DIR) if isfile(join(MUSIC_DIR, f))])
         self.verticalLayout.addWidget(self.selectSignal)
         self.volumeLabel = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
         self.volumeLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -118,11 +130,12 @@ class Ui_MainWindow(object):
         self.startButton.setStyleSheet("background-color: green; color: white;")
         self.startButton.setDefault(False)
         self.startButton.setObjectName("startButton")
+        self.startButton.clicked.connect(self.start_timer)
         self.verticalLayout.addWidget(self.startButton)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.timer = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
@@ -143,60 +156,97 @@ class Ui_MainWindow(object):
         self.tableUserData.setObjectName("tableUserData")
         self.verticalLayout_2.addWidget(self.tableUserData)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 860, 22))
-        self.menubar.setStyleSheet("color: white;\n"
-"\n"
-"QMenu {\n"
-"    background-color: rgb(190, 206, 221); /* sets background of the menu */\n"
-"    border: 1px solid black;\n"
-"}\n"
-"\n"
-"")
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 860, 29))
+        self.menubar.setStyleSheet("""color: white;
+                                    QMenu {
+                                        background-color: rgb(190, 206, 221); /* sets background of the menu */
+                                        border: 1px solid black;
+                                    }""")
         self.menubar.setObjectName("menubar")
-        self.menu = QtWidgets.QMenu(self.menubar)
-        self.menu.setObjectName("menu")
+        self.users = QtWidgets.QMenu(self.menubar)
+        self.users.setObjectName("users")
         self.menu_2 = QtWidgets.QMenu(self.menubar)
         self.menu_2.setObjectName("menu_2")
         self.menu_3 = QtWidgets.QMenu(self.menubar)
         self.menu_3.setObjectName("menu_3")
-        MainWindow.setMenuBar(self.menubar)
+        self.MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.MainWindow.setStatusBar(self.statusbar)
+        self.new_user = QtWidgets.QAction(MainWindow)
+        self.new_user.setObjectName("new_user")
+        self.select_user = QtWidgets.QAction(MainWindow)
+        self.select_user.setObjectName("select_user")
+        self.exit = QtWidgets.QAction(MainWindow)
+        self.exit.setObjectName("exit")
+        self.action = QtWidgets.QAction(MainWindow)
+        self.action.setObjectName("action")
         self.action_2 = QtWidgets.QAction(MainWindow)
         self.action_2.setObjectName("action_2")
-        self.action_4 = QtWidgets.QAction(MainWindow)
-        self.action_4.setObjectName("action_4")
-        self.action_5 = QtWidgets.QAction(MainWindow)
-        self.action_5.setObjectName("action_5")
-        self.menu.addSeparator()
-        self.menu.addAction(self.action_2)
-        self.menu.addSeparator()
-        self.menu.addAction(self.action_4)
-        self.menu.addSeparator()
-        self.menu.addAction(self.action_5)
-        self.menubar.addAction(self.menu.menuAction())
+        self.action_3 = QtWidgets.QAction(MainWindow)
+        self.action_3.setObjectName("action_3")
+        self.users.addSeparator()
+        self.users.addAction(self.new_user)
+        self.users.addSeparator()
+        self.users.addAction(self.select_user)
+        self.users.addSeparator()
+        self.users.addAction(self.exit)
+        self.menu_2.addAction(self.action)
+        self.menu_2.addAction(self.action_2)
+        self.menu_2.addAction(self.action_3)
+        self.menubar.addAction(self.users.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def start_timer(self):
+        time_start = datetime.now()
+        counter = self.setTime.time().toString()
+        counter = datetime.strptime(counter, "%H:%M:%S")
+
+        def handler(select_signal, window):
+            nonlocal counter
+            counter -= timedelta(seconds=1)
+            self.update_time(counter.strftime("%H:%M:%S"))
+            if counter.second <= 0 and counter.minute <= 0 and counter.hour <= 0:
+                player = MediaPlayer("../music/{}.mp3".format(select_signal.currentText()))
+                player.play()
+                timer.stop()
+                timer.deleteLater()
+                time_end = datetime.now()
+                db_connect = Database()
+                db_connect.create_track(time_start, time_end, self.timerText.toPlainText())
+                QtWidgets.QMessageBox.about(window, "Timetracker", "Время вышло")
+                player.stop()
+
+        timer = QtCore.QTimer()
+        timer.timeout.connect(
+            lambda select_signal=self.selectSignal, window=self.MainWindow: handler(select_signal, window))
+        timer.start(1000)
+
+    def update_time(self, time):
+        self.timer.setText(time)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "TimeTracker v.1.0"))
+        self.MainWindow.setWindowTitle(_translate("MainWindow", "TimeTracker v.1.0"))
         self.timerInnerLabel.setText(_translate("MainWindow", "Содержимое таймера:"))
         self.timerText.setPlaceholderText(_translate("MainWindow", "Пишите здесь..."))
         self.timeLabel.setText(_translate("MainWindow", "Время"))
         self.soundLabel.setText(_translate("MainWindow", "Звук"))
         self.volumeLabel.setText(_translate("MainWindow", "Громкость"))
         self.startButton.setText(_translate("MainWindow", "START"))
-        self.timer.setText(_translate("MainWindow", "12:00:32"))
-        self.menu.setTitle(_translate("MainWindow", "Пользователи"))
+        self.timer.setText(_translate("MainWindow", "00:00:00"))
+        self.users.setTitle(_translate("MainWindow", "Пользователи"))
         self.menu_2.setTitle(_translate("MainWindow", "Настройки"))
         self.menu_3.setTitle(_translate("MainWindow", "О программе"))
-        self.action_2.setText(_translate("MainWindow", "Новый пользователь"))
-        self.action_4.setText(_translate("MainWindow", "Выбрать пользователя"))
-        self.action_5.setText(_translate("MainWindow", "Выход"))
+        self.new_user.setText(_translate("MainWindow", "Новый пользователь"))
+        self.select_user.setText(_translate("MainWindow", "Выбрать пользователя"))
+        self.exit.setText(_translate("MainWindow", "Выход"))
+        self.action.setText(_translate("MainWindow", "Вид"))
+        self.action_2.setText(_translate("MainWindow", "Язык"))
+        self.action_3.setText(_translate("MainWindow", "Дополнительно"))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './grafic/select_user.ui'
+# Form implementation generated from reading ui file './ui_files/select_user.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -20,7 +20,7 @@ class Ui_selectUserWindow(object):
         sizePolicy.setHeightForWidth(selectUserWindow.sizePolicy().hasHeightForWidth())
         selectUserWindow.setSizePolicy(sizePolicy)
         selectUserWindow.setMinimumSize(QtCore.QSize(390, 277))
-        selectUserWindow.setMaximumSize(QtCore.QSize(403, 298))
+        selectUserWindow.setMaximumSize(QtCore.QSize(390, 277))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("../images/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         selectUserWindow.setWindowIcon(icon)
@@ -114,6 +114,7 @@ class Ui_selectUserWindow(object):
         spacerItem1 = QtWidgets.QSpacerItem(10, 5, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.exit = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.exit.clicked.connect(selectUserWindow.close)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
