@@ -1,19 +1,10 @@
 import sys
-from src import interface
+from PyQt5 import QtWidgets
+from main_window import MainWindow
 
-app = interface.QtWidgets.QApplication([])
+app = QtWidgets.QApplication([])
 
-application = interface.MainWindow()
+application = MainWindow()
 application.show()
-
-login_app = interface.LoginWindow()
-login_app.show()
-
-new_user_app = interface.NewUserWindow()
-new_user_app.show()
-
-about_window = interface.AboutWindow()
-about_window.show()
-
 
 sys.exit(app.exec())

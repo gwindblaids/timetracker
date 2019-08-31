@@ -103,6 +103,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 !/src/timetracker.db
+
+
+.idea
 Будет удалено .idea/.gitignore
 Будет удалено .idea/inspectionProfiles/
 Будет удалено .idea/libraries/
