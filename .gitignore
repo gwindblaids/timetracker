@@ -114,3 +114,4 @@ venv.bak/
 Будет удалено .idea/timetracker.iml
 Будет удалено .idea/vcs.xml
 Будет удалено images/icon.png
+!/time_tracker.db
