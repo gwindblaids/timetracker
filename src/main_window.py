@@ -3,7 +3,7 @@ from os import listdir
 from os.path import isfile, join
 from datetime import datetime, timedelta
 from dbconnect import Database
-from vlc import MediaPlayer
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from settings import *
 from about_us import AboutWindow
 from user_form import NewUserWindow
@@ -15,15 +15,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self):
         """initialize window object"""
-        super().__init__()
-        self.initUI()
 
-    def initUI(self):
-        """initialize users UI"""
+        super().__init__()
+
+        # connect to database
+        self.model_user_data = QtGui.QStandardItemModel()
+        self.db_connect = Database()
+
+        # initialize GUI
         self.setObjectName("MainWindow")
         self.resize(860, 618)
-        self.setMinimumSize(QtCore.QSize(860, 618))
-        self.setMaximumSize(QtCore.QSize(860, 618))
+        self.setMinimumSize(QtCore.QSize(1060, 818))
+        self.setMaximumSize(QtCore.QSize(1060, 818))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(IMAGES_DIR + "icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
@@ -45,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.central_widget.setObjectName("central_widget")
 
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.central_widget)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(40, 10, 781, 551))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(40, 10, 981, 751))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -69,8 +72,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timerInnerLabel.setObjectName("timerInnerLabel")
 
         self.verticalLayout.addWidget(self.timerInnerLabel)
-        spacerItem = QtWidgets.QSpacerItem(20, 15, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.verticalLayout.addItem(spacerItem)
+        spacer_item = QtWidgets.QSpacerItem(20, 15, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout.addItem(spacer_item)
         self.timer_text = QtWidgets.QTextEdit(self.horizontalLayoutWidget_2)
 
         font.setPointSize(14)
@@ -119,7 +122,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.selectSignal.setStyleSheet("color:white;")
         self.selectSignal.setEditable(False)
         self.selectSignal.setObjectName("selectSignal")
-        self.selectSignal.addItems([f.replace(".mp3", "") for f in listdir(MUSIC_DIR) if isfile(join(MUSIC_DIR, f))])
+        self.selectSignal.addItems(
+            [f.replace(".mp3", "") for f in listdir(MUSIC_DIR) if isfile(join(MUSIC_DIR, f))]
+        )  # get list of name files from MUSIC_DIR directory
 
         self.verticalLayout.addWidget(self.selectSignal)
 
@@ -153,12 +158,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.startButton = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
 
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.startButton.sizePolicy().hasHeightForWidth())
+        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+        size_policy.setHorizontalStretch(0)
+        size_policy.setVerticalStretch(0)
+        size_policy.setHeightForWidth(self.startButton.sizePolicy().hasHeightForWidth())
 
-        self.startButton.setSizePolicy(sizePolicy)
+        self.startButton.setSizePolicy(size_policy)
 
         font.setPointSize(16)
 
@@ -174,8 +179,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        spacer_item1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacer_item1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
@@ -191,11 +196,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.verticalLayout_2.addWidget(self.timer)
 
+        font.setPointSize(12)
+
         self.tableUserData = QtWidgets.QTableView(self.horizontalLayoutWidget_2)
         self.tableUserData.setFont(font)
         self.tableUserData.setStyleSheet("background-color:rgb(211, 215, 207); color: black;")
         self.tableUserData.setSortingEnabled(True)
         self.tableUserData.setObjectName("tableUserData")
+        self.tableUserData.horizontalHeader().setStretchLastSection(True)
+
+        self.print_table()
 
         self.verticalLayout_2.addWidget(self.tableUserData)
 
@@ -221,8 +231,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.about_menu = QtWidgets.QMenu(self.menubar)
         self.about_menu.setObjectName("about_menu")
 
-        self.about_timetracker = QtWidgets.QAction(QtGui.QIcon(IMAGES_DIR + 'about_timetraker.png'), 'О Timetracker',
-                                                   self)
+        self.about_timetracker = QtWidgets.QAction(QtGui.QIcon(
+            IMAGES_DIR + 'about_timetraker.png'),
+            'О Timetracker', self)
         self.about_timetracker.setStatusTip('Информация о приложении')
         self.about_timetracker.triggered.connect(self.create_about_window)
 
@@ -278,12 +289,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menubar.addAction(self.settings_menu.menuAction())
         self.menubar.addAction(self.about_menu.menuAction())
 
-        self.retranslateUi()
+        self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
         self.show()
 
     def create_select_user_window(self):
-        """create select window object"""
+        """create new window object"""
         self.select_user_window.show()
 
     def create_new_user_window(self):
@@ -291,7 +302,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.new_user_window.show()
 
     def create_about_window(self):
+        """create new window object"""
         self.about_window.show()
+
+    def print_table(self):
+        """print data into table"""
+        data = self.db_connect.get_track_list
+        for row in range(len(data)):
+            for col in range(0, 3):
+                item = QtGui.QStandardItem(str(data[row][col]))
+                self.model_user_data.setItem(row, col, item)
+        self.model_user_data.setHorizontalHeaderLabels(["Начало", "Конец", "Описание"])
+        self.tableUserData.setModel(self.model_user_data)
 
     def start_timer(self):
         """Run when timer started"""
@@ -299,36 +321,35 @@ class MainWindow(QtWidgets.QMainWindow):
         counter = self.setTime.time().toString()
         counter = datetime.strptime(counter, "%H:%M:%S")
 
-        def handler(select_signal, timer_text, volume, window):
+        def handler():
             """Handler function for one tick timer"""
             nonlocal counter
             counter -= timedelta(seconds=1)
             self.update_time(counter.strftime("%H:%M:%S"))
             if counter.second <= 0 and counter.minute <= 0 and counter.hour <= 0:
-                player = MediaPlayer(MUSIC_DIR + "{}.mp3".format(select_signal.currentText()))
-                player.audio_set_volume(volume)
+                player = QMediaPlayer()
+                url = QtCore.QUrl.fromLocalFile(
+                    QtCore.QDir().absolutePath() + "/" + MUSIC_DIR + "{}.mp3".format(self.selectSignal.currentText()))
+                player.setMedia(QMediaContent(url))
+                player.setVolume(self.volume.value())
                 player.play()
                 timer.stop()
                 timer.deleteLater()
                 time_end = datetime.now()
-                db_connect = Database()
-                db_connect.create_track(time_start, time_end, timer_text.toPlainText())
-                QtWidgets.QMessageBox.about(window, "Timetracker", "Время вышло")
+                self.db_connect.create_track(time_start, time_end, self.timer_text.toPlainText())
+                QtWidgets.QMessageBox.about(self, "Timetracker", "Время вышло")
                 player.stop()
+                self.print_table()
 
         timer = QtCore.QTimer()
-        timer.timeout.connect(
-            lambda select_signal=self.selectSignal, timer_text=self.timer_text, volume=self.volume.value(),
-                   window=self: handler(select_signal,
-                                        timer_text, volume,
-                                        window))
+        timer.timeout.connect(handler)
         timer.start(1000)
 
     def update_time(self, time):
         """Update time in time label"""
         self.timer.setText(time)
 
-    def retranslateUi(self):
+    def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "TimeTracker v.1.0"))
         self.timerInnerLabel.setText(_translate("MainWindow", "Содержимое таймера:"))

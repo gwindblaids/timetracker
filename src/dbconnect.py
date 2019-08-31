@@ -30,6 +30,13 @@ class Database:
         result = self.cursor.execute(sql)
         return result.fetchall()
 
+    @property
+    def get_track_list(self):
+        """getting info about track"""
+        sql = """select * from tracker where user_id={};""".format(self.user_id)
+        result = self.cursor.execute(sql)
+        return result.fetchall()
+
     def create_track(self, time_start, time_end, text_track):
         sql = """INSERT INTO tracker
         VALUES ('{}', '{}', '{}', {})""".format(time_start, time_end, text_track, self.user_id)
