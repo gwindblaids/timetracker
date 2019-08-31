@@ -299,13 +299,14 @@ class MainWindow(QtWidgets.QMainWindow):
         counter = self.setTime.time().toString()
         counter = datetime.strptime(counter, "%H:%M:%S")
 
-        def handler(select_signal, timer_text, window):
+        def handler(select_signal, timer_text, volume, window):
             """Handler function for one tick timer"""
             nonlocal counter
             counter -= timedelta(seconds=1)
             self.update_time(counter.strftime("%H:%M:%S"))
             if counter.second <= 0 and counter.minute <= 0 and counter.hour <= 0:
                 player = MediaPlayer(MUSIC_DIR + "{}.mp3".format(select_signal.currentText()))
+                player.audio_set_volume(volume)
                 player.play()
                 timer.stop()
                 timer.deleteLater()
@@ -317,9 +318,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         timer = QtCore.QTimer()
         timer.timeout.connect(
-            lambda select_signal=self.selectSignal, timer_text=self.timer_text, window=self: handler(select_signal,
-                                                                                                     timer_text,
-                                                                                                     window))
+            lambda select_signal=self.selectSignal, timer_text=self.timer_text, volume=self.volume.value(),
+                   window=self: handler(select_signal,
+                                        timer_text, volume,
+                                        window))
         timer.start(1000)
 
     def update_time(self, time):
