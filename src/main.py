@@ -1,9 +1,3 @@
-import sys
-from PyQt5 import QtWidgets
-from main_window import MainWindow
-app = QtWidgets.QApplication([])
+#!/usr/bin/env python3
 
-application = MainWindow()
-application.show()
 
-sys.exit(app.exec())
