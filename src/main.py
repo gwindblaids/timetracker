@@ -30,7 +30,8 @@ class MainWindow(gtk.Window):
        
         # ---------------------------------------------------------------------
         # create widgets
-        self.menu_label = gtk.Label(label='Some text')
+        self.menu_label = gtk.Label(label='Some text', xpad=23, ypad=24)
+        self.menu_butt
         # ---------------------------------------------------------------------
 
         # ---------------------------------------------------------------------
